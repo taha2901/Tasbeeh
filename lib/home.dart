@@ -10,6 +10,8 @@ class HomeScreen extends StatefulWidget {
 
 int rad = 0;
 int colorHex = 0xffB1001C;
+int _counter = 0;
+int _time = 0;
 
 class _HomeScreenState extends State<HomeScreen> {
   TextDirection textDirection = TextDirection.rtl;
@@ -22,9 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             // resetToZero(resetGoal: true);
-            setState(() {
-              
-            });
+            setState(() {});
           },
           backgroundColor: mainColor,
           child: const Icon(
@@ -171,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: 4,
                 ),
                 Text(
-                  "17",
+                  "$_counter",
                   style: TextStyle(color: mainColor, fontSize: 22),
                 ),
                 const SizedBox(
@@ -180,12 +180,22 @@ class _HomeScreenState extends State<HomeScreen> {
                 CircularPercentIndicator(
                   radius: 80.0,
                   lineWidth: 5.0,
-                  percent: 0.5,
-                  header: const Text("Icon header"),
-                  center: Icon(
-                    Icons.touch_app,
-                    size: 50.0,
-                    color: mainColor,
+                  percent: _counter / 5,
+                  center: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if(_counter == 5){
+                          _time++;
+                          _counter = 0;
+                        }
+                        _counter++;
+                      });
+                    },
+                    child: Icon(
+                      Icons.touch_app,
+                      size: 50.0,
+                      color: mainColor,
+                    ),
                   ),
                   backgroundColor: mainColor.withOpacity(0.2),
                   progressColor: mainColor,
@@ -194,7 +204,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: 20,
                 ),
                 Text(
-                  "مرات التكرار : 0",
+                  "مرات التكرار : $_time",
                   style: TextStyle(color: mainColor, fontSize: 22),
                 ),
                 const SizedBox(
@@ -227,7 +237,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       }),
                   Radio(
                       fillColor: MaterialStateColor.resolveWith(
-                          (states) => Color(0xff14212A)),
+                          (states) => const Color(0xff14212A)),
                       value: 0xff14212A,
                       groupValue: colorHex,
                       onChanged: (val) {
