@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -16,12 +18,12 @@ int _time = 0;
 int _goal = 0;
 
 class _HomeScreenState extends State<HomeScreen> {
-
-  resetToZero(){
-    setCount(_counter=0);
-    setTime(_time=0);
-    setGoal(_goal=0);
+  resetToZero({bool resetGoal = false}) {
+    setCount(_counter = 0);
+    setTime(_time = 0);
+    resetGoal == true ? setGoal(_goal = 0) : null;
   }
+
   setCount(int value) async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
     pref.setInt('counter', value);
@@ -61,10 +63,8 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Scaffold(
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            resetToZero();
-            setState(() {
-              
-            });
+            resetToZero(resetGoal: true);
+            setState(() {});
           },
           backgroundColor: mainColor,
           child: const Icon(
@@ -118,15 +118,15 @@ class _HomeScreenState extends State<HomeScreen> {
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
                           '$_goal',
-                          style:
-                              const TextStyle(color: Colors.white, fontSize: 28),
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 28),
                         ),
                       ),
                       IconButton(
                         onPressed: () {
-                         setState(() {
-                            setGoal(_goal +=1);
-                         });
+                          setState(() {
+                            setGoal(_goal += 1);
+                          });
                         },
                         icon: const Icon(Icons.add_circle, color: Colors.white),
                       ),
@@ -135,71 +135,101 @@ class _HomeScreenState extends State<HomeScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Text(
-                          '0',
-                          style: TextStyle(color: Colors.black),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 8,
-                      ),
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Text(
-                          '33',
-                          style: TextStyle(color: Colors.black),
+                      GestureDetector(
+                        onTap: () {
+                          setGoal(_goal = 0);
+                          setState(() {});
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Text(
+                            '0',
+                            style: TextStyle(color: Colors.black),
+                          ),
                         ),
                       ),
                       const SizedBox(
                         width: 8,
                       ),
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Text(
-                          '100',
-                          style: TextStyle(color: Colors.black),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 8,
-                      ),
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Text(
-                          '+100',
-                          style: TextStyle(color: Colors.black),
+                      GestureDetector(
+                        onTap: () {
+                          setGoal(_goal = 33);
+                          setState(() {});
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Text(
+                            '33',
+                            style: TextStyle(color: Colors.black),
+                          ),
                         ),
                       ),
                       const SizedBox(
                         width: 8,
                       ),
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
+                      GestureDetector(
+                        onTap: () {
+                          setGoal(_goal = 100);
+                          setState(() {});
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Text(
+                            '100',
+                            style: TextStyle(color: Colors.black),
+                          ),
                         ),
-                        child: const Text(
-                          '+1000',
-                          style: TextStyle(color: Colors.black),
+                      ),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          setGoal(_goal += 100);
+                          setState(() {});
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Text(
+                            '+100',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          setGoal(_goal += 1000);
+                          setState(() {});
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Text(
+                            '+1000',
+                            style: TextStyle(color: Colors.black),
+                          ),
                         ),
                       ),
                       const SizedBox(
@@ -237,7 +267,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     onTap: () {
                       setState(() {
                         if (_counter == 30) {
-                          setTime(_time+=1);
+                          setTime(_time += 1);
                           setCount(_counter = 0);
                         }
                         setCount(_counter += 1);
