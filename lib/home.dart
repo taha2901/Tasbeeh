@@ -16,6 +16,7 @@ int colorHex = 0xffB1001C;
 int _counter = 0;
 int _time = 0;
 int _goal = 0;
+bool isActive = false;
 
 class _HomeScreenState extends State<HomeScreen> {
   resetToZero({bool resetGoal = false}) {
@@ -39,12 +40,19 @@ class _HomeScreenState extends State<HomeScreen> {
     pref.setInt('goal', value);
   }
 
+  setColor(int value) async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.setInt('color', value);
+    getCount();
+  }
+
   getCount() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
     setState(() {
       _counter = pref.getInt('counter') ?? 0;
       _time = pref.getInt('time') ?? 0;
       _goal = pref.getInt('goal') ?? 0;
+      colorHex = pref.getInt('color') ?? 0xffB1001C;
     });
   }
 
@@ -77,9 +85,13 @@ class _HomeScreenState extends State<HomeScreen> {
           elevation: 0.0,
           actions: [
             IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.color_lens,
+              onPressed: () {
+                setState(() {
+                  isActive =! isActive;
+                });
+              },
+              icon: Icon(
+                isActive == true ? Icons.color_lens_outlined : Icons.color_lens,
                 color: Colors.white,
               ),
             ),
@@ -266,11 +278,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   center: GestureDetector(
                     onTap: () {
                       setState(() {
-                        if (_counter == 30) {
+                        if (_counter >= _goal) {
                           setTime(_time += 1);
-                          setCount(_counter = 0);
+                          setCount(_counter = 1);
+                        } else {
+                          setCount(_counter += 1);
                         }
-                        setCount(_counter += 1);
                       });
                     },
                     child: Icon(
@@ -304,42 +317,45 @@ class _HomeScreenState extends State<HomeScreen> {
             const Spacer(),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  Radio(
-                      fillColor: MaterialStateColor.resolveWith(
-                          (states) => const Color(0xffB1001C)),
-                      value: 0xffB1001C,
-                      groupValue: colorHex,
-                      onChanged: (val) {
-                        setState(() {
-                          // setColor(val!);
-                          colorHex = val!;
-                        });
-                      }),
-                  Radio(
-                      fillColor: MaterialStateColor.resolveWith(
-                          (states) => const Color(0xff14212A)),
-                      value: 0xff14212A,
-                      groupValue: colorHex,
-                      onChanged: (val) {
-                        setState(() {
-                          // setColor(val!);
-                          colorHex = val!;
-                        });
-                      }),
-                  Radio(
-                      fillColor: MaterialStateColor.resolveWith(
-                          (states) => Color(0xff62249F)),
-                      value: 0xff62249F,
-                      groupValue: colorHex,
-                      onChanged: (val) {
-                        setState(() {
-                          // setColor(val!);
-                          colorHex = val!;
-                        });
-                      }),
-                ],
+              child: Visibility(
+                visible: isActive,
+                child: Row(
+                  children: [
+                    Radio(
+                        fillColor: MaterialStateColor.resolveWith(
+                            (states) => const Color(0xffB1001C)),
+                        value: 0xffB1001C,
+                        groupValue: colorHex,
+                        onChanged: (val) {
+                          setState(() {
+                            setColor(val!);
+                            // colorHex = val!;
+                          });
+                        }),
+                    Radio(
+                        fillColor: MaterialStateColor.resolveWith(
+                            (states) => const Color(0xff14212A)),
+                        value: 0xff14212A,
+                        groupValue: colorHex,
+                        onChanged: (val) {
+                          setState(() {
+                            setColor(val!);
+                            // colorHex = val!;
+                          });
+                        }),
+                    Radio(
+                        fillColor: MaterialStateColor.resolveWith(
+                            (states) => Color(0xff62249F)),
+                        value: 0xff62249F,
+                        groupValue: colorHex,
+                        onChanged: (val) {
+                          setState(() {
+                            setColor(val!);
+                            // colorHex = val!;
+                          });
+                        }),
+                  ],
+                ),
               ),
             ),
           ],
