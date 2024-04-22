@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -12,8 +13,45 @@ int rad = 0;
 int colorHex = 0xffB1001C;
 int _counter = 0;
 int _time = 0;
+int _goal = 0;
 
 class _HomeScreenState extends State<HomeScreen> {
+
+  resetToZero(){
+    setCount(_counter=0);
+    setTime(_time=0);
+    setGoal(_goal=0);
+  }
+  setCount(int value) async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.setInt('counter', value);
+  }
+
+  setTime(int value) async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.setInt('time', value);
+  }
+
+  setGoal(int value) async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.setInt('goal', value);
+  }
+
+  getCount() async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    setState(() {
+      _counter = pref.getInt('counter') ?? 0;
+      _time = pref.getInt('time') ?? 0;
+      _goal = pref.getInt('goal') ?? 0;
+    });
+  }
+
+  @override
+  void initState() {
+    getCount();
+    super.initState();
+  }
+
   TextDirection textDirection = TextDirection.rtl;
   @override
   Widget build(BuildContext context) {
@@ -23,8 +61,10 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Scaffold(
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            // resetToZero(resetGoal: true);
-            setState(() {});
+            resetToZero();
+            setState(() {
+              
+            });
           },
           backgroundColor: mainColor,
           child: const Icon(
@@ -64,18 +104,30 @@ class _HomeScreenState extends State<HomeScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          setState(() {
+                            setGoal(_goal -= 1);
+                          });
+                        },
                         icon: const Icon(
                           Icons.remove_circle,
                           color: Colors.white,
                         ),
                       ),
-                      const Text(
-                        '33',
-                        style: TextStyle(color: Colors.white, fontSize: 28),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          '$_goal',
+                          style:
+                              const TextStyle(color: Colors.white, fontSize: 28),
+                        ),
                       ),
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                         setState(() {
+                            setGoal(_goal +=1);
+                         });
+                        },
                         icon: const Icon(Icons.add_circle, color: Colors.white),
                       ),
                     ],
@@ -180,15 +232,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 CircularPercentIndicator(
                   radius: 80.0,
                   lineWidth: 5.0,
-                  percent: _counter / 5,
+                  percent: _counter / 33,
                   center: GestureDetector(
                     onTap: () {
                       setState(() {
-                        if(_counter == 5){
-                          _time++;
-                          _counter = 0;
+                        if (_counter == 30) {
+                          setTime(_time+=1);
+                          setCount(_counter = 0);
                         }
-                        _counter++;
+                        setCount(_counter += 1);
                       });
                     },
                     child: Icon(
@@ -211,7 +263,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: 4,
                 ),
                 Text(
-                  "المجموع : 90",
+                  "المجموع : ${_time * _goal + _counter}",
                   style: TextStyle(color: mainColor, fontSize: 22),
                 ),
                 const SizedBox(
